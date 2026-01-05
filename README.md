@@ -1,19 +1,12 @@
 # Running Metasploitable2 on WSL2
 
-To record a CMD.exe session, start your Ubuntu distribution. Then use asciinema with CMD.exe as a shell
-and record the commands in the DOS session. There are couple of gotchas, tl;dr; this is the command:
-
-```
-(cd /mnt/c && asciinema rec --overwrite --command "$(which cmd.exe) /D /K cd /d c:\\" /tmp/kali-linux-on-wsl2.cast)
-```
-
 ## Install Windows Terminal
 
 Install the [free Windows Terminal](https://apps.microsoft.com/detail/9N0DX20HK701) from the Microsoft
 Store.
 
 
-## Enabling WSl2 on Windows
+## Enabling WSL2 on Windows
 
 From an elevated command prompt (*Run As Administrator*), run the following commands:
 
