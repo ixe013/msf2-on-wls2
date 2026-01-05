@@ -29,13 +29,6 @@ prompt and run the following command to make sure you are using WLS2.:
 wsl --set-default-version 2
 ```
 
-## Enabling nested virtualization
-
-This requires Windows 11, it is not supported on Windows 10. The steps should work, but performance
-will suffer.
-
-Follow the [steps documented on ServerFault](https://serverfault.com/a/1115773/81170).
-
 ## Install Kali Linux
 
 Kali Linux can now be installed from the Windows store. From a command prompt in Windows, type the
@@ -53,6 +46,27 @@ sudo apt update
 sudo apt install kali-linux-default kali-win-kex burpsuite --assume-yes
 ```
 
+## Enabling nested virtualization
+
+This requires Windows 11, it is not supported on Windows 10. The steps should work, but performance
+will suffer.
+
+Follow the [steps documented on ServerFault](https://serverfault.com/a/1115773/81170) to make nested
+virtualization permanent. But you can just do the following in Kali everytime:
+
+```
+sudo usermod -a -G kvm ${USER}
+# Use kvm_amd if you have an AMD CPU
+modprobe kvm_intel
+sudo chown root:kvm /dev/kvm && sudo chmod 660 /dev/kvm
+```
+
+## Install the virtual machine manager tools
+
+```
+sudo apt update
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients virtinst libguestfs-tools virt-manager
+```
 
 ## Preparing the Metasploitable2 image
 
@@ -66,6 +80,7 @@ There are a few files, but we only need the VMDK. Extract it with this command:
 
 ```
 unzip -j metasploitable-linux-2.0.0.zip Metasploitable2-Linux/Metasploitable.vmdk
+rm metasploitable-linux-2.0.0.zip
 ```
 
 ## Create the lab network
@@ -99,10 +114,9 @@ And we import the disk in a new virtual machine.
 ```
 sudo virt-install \
    --name Metasploitable2 \
-   --hostname msf2.test \
    --os-variant ubuntu8.04 \
    --disk path=/var/lib/libvirt/images/metasploitable2.qcow2,bus=ide \
-   --network network=inf805-lab-network,model=e1000 \
+   --network network=attack-network,model=e1000 \
    --graphics vnc,listen=0.0.0.0 \
    --import \
    --noautoconsole \
@@ -116,6 +130,6 @@ Your Metasploitable2 virtual machine should be ready to go! It uses a graphical 
 default, so you can use virt-manager's VNC console to connect to the VM:
 
 ```
-virt-manager --connect qemu:///system --show-domain-console Metasploitable2
+sudo virt-manager --connect qemu:///system --show-domain-console Metasploitable2
 ```
 
