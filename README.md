@@ -86,10 +86,19 @@ sudo virsh net-start attack-network
 sudo virsh net-autostart attack-network
 ```
 
-Might as well add the IP address of the VM right away
+Might as well add the IP address of the VM right away:
 
 ```
 sudo sed -zi '/192.168.3.20 msf2.test/!s/$/\n192.168.3.20 msf2.test\n/' /etc/hosts
+```
+
+But to avoid doing that at every reboot, add the command to /etc/wsl.conf. Be carefull
+to copy the command below, not the one above. It needs some extra escaping:
+
+```
+[boot]
+systemd=true
+command="sed -zi '/192.168.3.20 msf2.test/!s/$/\\n192.168.3.20 msf2.test\\n/' /etc/hosts"
 ```
 
 ## Create the virtual machine
@@ -117,6 +126,13 @@ sudo virt-install \
    ;
 ```
 
+If you want to autostart the VM at every boot, do the following:
+
+```
+sudo virsh autostart Metasploitable2
+```
+
+
 ## Connect to the virtual machine
 
 Your Metasploitable2 virtual machine should be ready to go! It uses a graphical console by
@@ -126,3 +142,5 @@ default, so you can use virt-manager's VNC console to connect to the VM:
 sudo virt-manager --connect qemu:///system --show-domain-console Metasploitable2
 ```
 
+You can give it a static IP address on the `attack-network`, I leave that as an exercice
+to you!
